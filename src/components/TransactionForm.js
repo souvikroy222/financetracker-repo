@@ -1,16 +1,30 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { authReducer } from "../context/authContext";
 import { UseFirestore } from "../customhooks/UseFirestore";
+import { userContext } from "../context/authContext";
 
 const TransactionForm = () => {
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
-  const { docId, addDocuments } = UseFirestore();
+  const { state } = useContext(userContext);
+
+  const { firestorestate, addDocuments } = UseFirestore();
+  //const { document } = firestorestate;
+
+  const userId = state.user[0].uid;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(name, value);
-    addDocuments(name, value);
+    console.log(name, value, userId);
+    addDocuments(name, value, userId);
   };
+
+  useEffect(() => {
+    if (firestorestate.success === true) {
+      setName("");
+      setValue("");
+    }
+  }, [firestorestate.success]);
 
   return (
     <>

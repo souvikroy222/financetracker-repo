@@ -1,6 +1,6 @@
 import { db } from "../firebase/config";
 import React, { useReducer, useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc,updateDoc, serverTimestamp } from "firebase/firestore";
 
 const initialState = {
   document: null,
@@ -14,37 +14,46 @@ const firestoreReducer = (state, action) => {
       return {
         ...state,
         isPending: true,
+        success:false
       };
-    case "IS_SUCCESS"  :
-        return{
-            ...state,document:action.payload
-        }
+    case "IS_SUCCESS":
+      return {
+        ...state,
+        success:true,
+        document: action.payload,
+      };
     case "IS_FAILED":
-        return{
-            ...state,error:action.payload
-        }
+      return {
+        ...state,
+        error: action.payload,
+        success:false
+      };
     default:
       return state;
   }
 };
 
 export const UseFirestore = () => {
-  const [state, dispatch] = useReducer(firestoreReducer, initialState);
-  const [isCancelled, setisCancelled] = useState(false);
+  const [firestorestate, dispatch] = useReducer(firestoreReducer, initialState);
+  //const [isCancelled, setisCancelled] = useState(false);
 
   //add documents
-  const addDocuments = async (name, value) => {
+  const addDocuments = async (name, value,userId) => {
     try {
       dispatch({ type: "IS_PENDING" });
       const docRef = await addDoc(collection(db, "transactions"), {
         transactionAmount: name,
-        transactionValue: value,
+        transactionValue: value, 
+        userID:userId       
       });
-      dispatch({ type: "IS_SUCCESS",payload:docRef });
+      const updatedDoc =await updateDoc(docRef, {
+        timestamp: serverTimestamp()
+    });
+      dispatch({ type: "IS_SUCCESS", payload: updatedDoc });
       console.log("Document written with ID: ", docRef);
     } catch (error) {
       console.error("Error adding document: ", error);
-      dispatch({ type: "IS_FAILED",payload:"Error adding document" });
+      dispatch({ type: "IS_FAILED", payload: "Error adding document" });
     }
   };
 
@@ -61,5 +70,5 @@ export const UseFirestore = () => {
     }
   };*/
 
-  return { addDocuments };
+  return { addDocuments,firestorestate };
 };
