@@ -1,18 +1,31 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import styles from "./Signup.module.css";
 import { useState } from "react";
-import  {UseSignUp}  from "../customhooks/UseSignUp";
+import { UseSignUp } from "../customhooks/UseSignUp";
+import { userContext } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");  
-  const {signUp}=UseSignUp()
+  const [displayName, setDisplayName] = useState("");
+  const { signUp, isPending, error } = UseSignUp();
+  const {
+    state: { user },
+  } = useContext(userContext);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     e.preventDefault();
-    signUp(email,password)
+    signUp(email, password, displayName);
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     <form className={styles.login__form} onSubmit={handleChange}>
@@ -44,7 +57,14 @@ const SignUp = () => {
           required
         />
       </label>
-      <button className="btn">Create Account</button>
+
+      {!isPending && <button className="btn">Create Account</button>}
+      {isPending && (
+        <button className="btn" disabled>
+          Loading
+        </button>
+      )}
+      {error && <p>{error}</p>}
     </form>
   );
 };
