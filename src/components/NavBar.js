@@ -5,9 +5,8 @@ import { userContext } from "../context/authContext";
 import { UseLogout } from "../customhooks/UseLogout";
 
 const NavBar = () => {
-  const {logout,isPending,error}=UseLogout()
+  const { logout, isPending, error } = UseLogout();
   const { state } = useContext(userContext);
-  
 
   console.log(state);
 
@@ -26,9 +25,14 @@ const NavBar = () => {
               <Link to="/signup">Signup</Link>
             </li>
           </>
-        ):<li>
-        <button className="btn" onClick={logout}>Logout</button>
-      </li>}
+        ) : (
+          <li>
+            <span>{`Hi✌ ${state.user[0].displayName}`}</span>
+            <button className="btn" onClick={logout}>
+              Logout
+            </button>
+          </li>
+        )}
       </ul>
     </nav>
   );

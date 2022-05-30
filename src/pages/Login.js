@@ -1,14 +1,32 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./Login.module.css";
+import { UserLogin } from "../customhooks/UserLogin";
+import { userContext } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = () => {  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { signIn, isPending, error } = UserLogin();
+  
+  
+
+  const {
+    state: { user },
+  } = useContext(userContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     e.preventDefault();
+    signIn(email, password);
     console.log(email, password);
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     <form className={styles.login__form} onSubmit={handleChange}>

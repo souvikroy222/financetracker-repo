@@ -10,6 +10,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const { signUp, isPending, error } = UseSignUp();
+  
   const {
     state: { user },
   } = useContext(userContext);
