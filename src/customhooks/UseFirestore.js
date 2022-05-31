@@ -35,6 +35,7 @@ const firestoreReducer = (state, action) => {
 
 export const UseFirestore = () => {
   const [firestorestate, dispatch] = useReducer(firestoreReducer, initialState);
+  const [documentRef,setDocumentRef]=useState(null)
   //const [isCancelled, setisCancelled] = useState(false);
 
   //add documents
@@ -50,7 +51,9 @@ export const UseFirestore = () => {
         timestamp: serverTimestamp()
     });
       dispatch({ type: "IS_SUCCESS", payload: updatedDoc });
+  
       console.log("Document written with ID: ", docRef);
+      setDocumentRef(docRef)
     } catch (error) {
       console.error("Error adding document: ", error);
       dispatch({ type: "IS_FAILED", payload: "Error adding document" });
@@ -70,5 +73,5 @@ export const UseFirestore = () => {
     }
   };*/
 
-  return { addDocuments,firestorestate };
+  return { addDocuments,firestorestate,documentRef };
 };

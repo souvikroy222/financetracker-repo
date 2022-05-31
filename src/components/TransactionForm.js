@@ -1,12 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { authReducer } from "../context/authContext";
 import { UseFirestore } from "../customhooks/UseFirestore";
 import { userContext } from "../context/authContext";
+import { UseCollection } from "../customhooks/UseCollection";
 
-const TransactionForm = () => {
+const TransactionForm = ({ fetchCollection }) => {
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
   const { state } = useContext(userContext);
+  const { error, documents } = UseCollection();
 
   const { firestorestate, addDocuments } = UseFirestore();
   //const { document } = firestorestate;
@@ -24,6 +26,10 @@ const TransactionForm = () => {
       setName("");
       setValue("");
     }
+  }, [firestorestate.success]);
+
+  useEffect(() => {
+    fetchCollection();
   }, [firestorestate.success]);
 
   return (
